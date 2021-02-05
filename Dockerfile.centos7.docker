@@ -1,0 +1,37 @@
+FROM centos7.2
+
+#change passwd
+RUN echo root:root@123|chpasswd
+
+#repo
+COPY conf/centos7/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
+RUN yum update -y
+
+#pip安装配置
+RUN yum -y install epel-release python-pip
+RUN yum clean all
+RUN mkdir -p /root/.pip
+COPY conf/pip.conf /root/.pip
+RUN pip install --upgrade pip
+
+RUN yum clean all && yum makecache
+
+ENV LANG="zh_CN.UTF-8"
+
+#build time
+RUN date > /root/date.txt
+
+#启动ssh、启动serving,且保证此任务不能结束
+ENTRYPOINT /usr/sbin/service ssh restart && sleep 9999999d
+
+#build
+#docker build -t local/centos:cdp-centos7-20210205.v1 -f Dockerfile.centos7.docker .
+
+#run
+#docker run -it --cpuset-cpus="0-15" --memory=32g --network host -v /data/:/data/ -d local/centos:cdp-centos7-20210205.v1
+
+#login
+#docker exec -it 11b5c468dff3f74d373fd7abc5cbf8596248c92b4a6473605c492ebdec77dd1f /bin/bash
+
+# view gpu
+#nvidia-smi

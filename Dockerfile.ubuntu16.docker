@@ -1,0 +1,26 @@
+FROM ubuntu:16.04
+
+#change passwd
+RUN echo root:root@123|chpasswd
+
+#root@ssh开启登录权限
+RUN sed -i 's/prohibit-password/yes/g' /etc/ssh/sshd_config
+
+#apt
+COPY conf/ubuntu16/sources.list /etc/apt
+RUN apt-get update
+
+#install software
+RUN apt install -y net-tools
+
+#pip安装配置
+RUN mkdir -p /root/.pip
+COPY conf/pip.conf /root/.pip
+
+#build time
+RUN date > /root/date.txt
+
+RUN echo "export LC_ALL=C" >> /root/.profile
+
+#启动ssh、启动serving,且保证此任务不能结束
+ENTRYPOINT /usr/sbin/service ssh restart && sleep 9999999d
