@@ -5,10 +5,10 @@ RUN echo root:root@123|chpasswd
 
 #repo
 COPY conf/centos7/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
-RUN yum update -y
 
 #pip安装配置
-RUN yum -y install epel-release python-pip
+RUN yum -y install epel-release
+RUN yum -y install python-pip
 RUN yum clean all
 RUN mkdir -p /root/.pip
 COPY conf/pip.conf /root/.pip
